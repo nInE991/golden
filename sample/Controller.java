@@ -13,8 +13,8 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 public class Controller {
-    List list;
-    Boolean min = true;
+    private List list;
+    private Boolean min = true;
     @FXML
     private TextField functionForm;
     @FXML
@@ -123,7 +123,7 @@ public class Controller {
                     method.r = new Expression("(1+sqrt(5))/2").eval();
 
                     method.latch = new CountDownLatch(1);
-                    while(method.a.subtract(method.b).abs().compareTo(method.tol) > 0&& method.cond==0){
+                    while(method.b.subtract(method.a).abs().compareTo(method.tol) > 0&& method.cond==0){
                         if (method.latch.getCount() != 1) {
                             method.latch = new CountDownLatch(1);
                         }
@@ -131,7 +131,7 @@ public class Controller {
                         method.x2 = method.getB();
                         method.functionx1 = new Expression(method.function).with(method.perem,method.x1).eval();
                         method.functionx2 = new Expression(method.function).with(method.perem,method.x2).eval();
-                        if(min==true){
+                        if(min){
                             method.SeachMin();
                         }
                         else{
@@ -186,13 +186,15 @@ public class Controller {
                         }
                         Thread.sleep(15);
                     }
+                    method.xResullt=method.b.add(method.a).divide(new BigDecimal(2));
+                    method.functionXResult= new Expression(method.function).with(method.perem,method.xResullt).eval();
                     Platform.runLater(() -> {
                         if (method.cond == 0) {
                             resultLabelForm.setText("Solution found!");
                         }
                         method.resultTime = System.currentTimeMillis() - method.startTime;
-                        resultXForm.setText(String.valueOf((method.x1)));
-                        resultFunctionXForm.setText(String.valueOf(method.functionx1.setScale(34, RoundingMode.UP)));
+                        resultXForm.setText(String.valueOf(method.xResullt.setScale(34,RoundingMode.UP)));
+                        resultFunctionXForm.setText(String.valueOf(method.functionXResult.setScale(34,RoundingMode.UP)));
                         resultAbsForm.setText(String.valueOf(method.b.subtract(method.a).abs().setScale(34, RoundingMode.UP)));
                         resultIterationForm.setText(String.valueOf(method.iter));
                         resultTimeForm.setText(String.valueOf(method.resultTime));
@@ -217,8 +219,8 @@ public class Controller {
                            resultLabelForm.setText(String.valueOf(ex.getMessage()));
                        });
                    }
-                   catch (Exception ignored){
-                       System.out.println(ignored.getMessage());
+                   catch (Exception err){
+                       System.out.println(err.getMessage());
                    }
                }
                 return null;

@@ -14,6 +14,8 @@ public class Method implements SeachTime{
     BigDecimal functionx1;
     BigDecimal functionx2;
     BigDecimal r;
+    BigDecimal xResullt;
+    BigDecimal functionXResult;
     String perem;
     int cond = 0;
     long iter = 0;
@@ -52,7 +54,7 @@ public class Method implements SeachTime{
             b=x2;
         }
     }
-    
+
     public BigDecimal getA(){
         return new Expression("b-((b-a)/r)").with("a",a).with("b",b).with("r",r).eval();
     }
