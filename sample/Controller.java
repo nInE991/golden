@@ -15,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 public class Controller {
     private List list;
     private Boolean min = true;
+    private Boolean lookingExcel=false;
     @FXML
     private TextField functionForm;
     @FXML
@@ -58,19 +59,24 @@ public class Controller {
     @FXML
     private void OpenExcel(){
     try{
-        System.out.println(new File(".").getAbsolutePath());
-    File file = new File("LookingForOneOptPoint.xlsx");
+        lookingExcel=true;
+        File file = new File("LookingForOneOptPoint.xlsx");
         String command = "excel \"" + file + "\"";
         Runtime.getRuntime().exec("cmd.exe /c start " + command);
 
     }
     catch (Exception err){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error Dialog");
-        alert.setHeaderText("Error !!! ");
-        alert.setContentText(String.valueOf(err.getMessage()));
-        alert.showAndWait();
+        System.out.println(String.valueOf(err.getMessage()));
     }
+    }
+    @FXML
+    private void ChangeLookingExcelFalse(){
+        try {
+            Runtime.getRuntime().exec("cmd.exe /c taskkill /f /im excel.exe");
+        } catch (Exception err){
+           System.out.println(String.valueOf(err.getMessage()));
+        }
+        lookingExcel=false;
     }
     @FXML
     private void ButtonSeach(){
@@ -78,6 +84,9 @@ public class Controller {
             @Override
             protected Object call(){
                 try{
+                    if(!lookingExcel){
+                        throw new Exception("Check the unimodality of the function in a given interval by pressing the buttonLookingForOneOptPoint !");
+                    }
                     Method method = new Method();
                     method.startTime=System.currentTimeMillis();
                     if (functionForm.getText().isEmpty()) {
@@ -226,9 +235,9 @@ public class Controller {
                 return null;
             }
         };
-    Thread thread = new Thread(task);
-    thread.start();
-    Platform.runLater(()->ButtonClean());
+            Thread thread = new Thread(task);
+            thread.start();
+            Platform.runLater(()->ButtonClean());
     }
     @FXML
     private void ButtonClean(){
